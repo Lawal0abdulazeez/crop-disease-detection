@@ -9,6 +9,7 @@ dependencies = [
     "kaggle>=2.2.4",
     "pillow",
     "python-dotenv>=1.2.2",
+    "torchvision>=0.28.0",
     "tqdm",
 ]
 

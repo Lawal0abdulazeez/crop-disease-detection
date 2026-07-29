@@ -238,6 +238,7 @@ dependencies = [
     { name = "kaggle" },
     { name = "pillow" },
     { name = "python-dotenv" },
+    { name = "torchvision" },
     { name = "tqdm" },
 ]
 
@@ -289,6 +290,7 @@ requires-dist = [
     { name = "seaborn", marker = "extra == 'ml'" },
     { name = "shap", marker = "extra == 'explainability'" },
     { name = "torch", marker = "extra == 'ml'" },
+    { name = "torchvision", specifier = ">=0.28.0" },
     { name = "torchvision", marker = "extra == 'ml'" },
     { name = "tqdm" },
     { name = "uvicorn", marker = "extra == 'api'" },
