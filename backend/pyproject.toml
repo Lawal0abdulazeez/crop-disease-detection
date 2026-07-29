@@ -1,0 +1,38 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "FastAPI backend and ML utilities for crop disease detection."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "datasets",
+    "kaggle>=2.2.4",
+    "pillow",
+    "python-dotenv>=1.2.2",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+api = [
+    "fastapi",
+    "python-dotenv",
+    "python-multipart",
+    "uvicorn",
+]
+ml = [
+    "albumentations",
+    "matplotlib",
+    "numpy",
+    "opencv-python",
+    "pandas",
+    "scikit-learn",
+    "seaborn",
+    "torch",
+    "torchvision",
+]
+explainability = [
+    "lime",
+    "llvmlite>=0.44",
+    "numba>=0.61",
+    "shap",
+]
