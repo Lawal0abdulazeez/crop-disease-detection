@@ -4,107 +4,92 @@
 
 This project uses `uv` for Python dependency management.
 
-```powershell
-uv sync
+```bash
+cd backend
+uv venv
+uv sync --extra ml
 ```
 
-Install the full backend and ML stack when you are ready for training/API work:
+For API and explainability later:
 
-```powershell
+```bash
 uv sync --extra api --extra ml --extra explainability
 ```
 
-## Download PlantVillage
+## Dataset
 
-The dataset downloader exports Hugging Face's predefined train/test split into
-`data/raw/plantvillage/`.
+The PlantVillage dataset is **not** included in the repository. Download it locally with the Kaggle API.
 
-For a quick smoke test:
+1. Create a `.env` file in `backend/` with:
 
-```powershell
-uv run python scripts/download_plantvillage.py --max-samples 10
+```env
+KAGGLE_USERNAME=your_username
+KAGGLE_KEY=your_key
 ```
 
-For the full color dataset:
+2. Download:
 
-```powershell
-uv run python scripts/download_plantvillage.py
+```bash
+uv run python scripts/download_dataset.py
 ```
 
-Available configurations:
+3. Prepare splits (train / val / test):
 
-```powershell
-uv run python scripts/download_plantvillage.py --config color
-uv run python scripts/download_plantvillage.py --config grayscale
-uv run python scripts/download_plantvillage.py --config segmented
-```
-
-✅ Milestone 1
-Project Setup
-
-✓ Project Structure
-✓ Configuration
-✓ Utilities
-✓ Logging
-
-----------------------------
-
-✅ Milestone 2
-Dataset Pipeline
-
-✓ Dataset Download
-✓ Dataset Preparation
-✓ Dataset Splitting
-✓ Metadata Generation
-✓ Dataloader
-
-----------------------------
-
-🚧 Milestone 3
-
-✓ EfficientNet
-✓ Model Factory
-✓ Optimizer
-✓ Scheduler
-✓ Loss
-✓ Metrics
-✓ Callbacks
-✓ Trainer
-✓ Train Script
-
-Pending
-
-• Integration Testing
-• Evaluator
-How to Run
-# create virtual environment
-uv venv
-
-# install dependencies
-uv sync
-
-# prepare dataset
+```bash
 uv run python -m scripts.prepare_dataset
+```
 
-# train
+Data will live under `backend/data/` (gitignored).
+
+## Training
+
+### 1. Choose training mode (in `app/core/config.py`)
+
+```python
+TRAINING_MODE = "full"   # options: "smoke" | "debug" | "full"
+```
+
+| Mode   | Purpose                         | Epochs | Batches limited? |
+|--------|---------------------------------|--------|------------------|
+| smoke  | Pipeline check                  | 1      | Yes (very few)   |
+| debug  | Quick sanity check              | 2      | Yes              |
+| full   | Real training on full dataset   | 20     | No               |
+
+### 2. Run training
+
+```bash
+# From the backend/ directory
 uv run python -m scripts.train
-Dataset
+```
 
-Mention that the dataset is not included in the repository.
+Checkpoints are saved to `backend/models/checkpoints/`:
+- `best_model.pt`
+- `last_model.pt`
+- periodic `epoch_XXX.pt`
 
-Example:
+History and plots go to:
+- `backend/outputs/history/training_history.json`
+- `backend/outputs/plots/` (loss, accuracy, LR curves)
 
-The PlantVillage dataset is downloaded locally using the Kaggle API and is intentionally excluded from version control.
+Logs: `backend/logs/training.log`
 
-Roadmap
-✔ Milestone 1
+### Resume training
 
-✔ Milestone 2
+In `scripts/train.py` set `resume=True` when calling `trainer.train(...)`, or modify the call after a quick edit.
 
-🚧 Milestone 3
+## Milestone Status
 
-⬜ Milestone 4
-FastAPI API
+| Milestone | Status |
+|-----------|--------|
+| 1. Project Foundation | ✅ Completed |
+| 2. Data Pipeline | ✅ Completed |
+| 3. Model Development & Training | ✅ Training pipeline ready (run on your machine) |
+| 4. Evaluation & Explainability | ⬜ Pending |
+| 5. FastAPI | ⬜ Pending |
+| 6. Frontend + Deployment | ⬜ Pending |
 
-⬜ Milestone 5
-Deployment
+## Notes
+
+- Requires Python ≥ 3.11
+- GPU (CUDA) is used automatically when available; otherwise CPU
+- `NUM_CLASSES` is detected from the dataset at runtime (no hard-coding)
