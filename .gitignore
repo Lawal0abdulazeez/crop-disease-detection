@@ -23,8 +23,6 @@ Thumbs.db
 logs/
 *.log
 
-# Dataset
-data/
 
 # Optional: if you only want to ignore raw data
 data/raw/
@@ -33,3 +31,36 @@ data/raw/
 .ipynb_checkpoints/
 
 backend/data/
+
+
+# Dataset
+data/raw/
+data/splits/
+
+# Metadata (optional)
+data/metadata/
+
+# Outputs
+outputs/
+
+# Logs
+logs/
+
+# Models
+models/checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
