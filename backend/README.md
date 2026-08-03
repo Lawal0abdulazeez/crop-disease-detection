@@ -38,3 +38,73 @@ uv run python scripts/download_plantvillage.py --config color
 uv run python scripts/download_plantvillage.py --config grayscale
 uv run python scripts/download_plantvillage.py --config segmented
 ```
+
+✅ Milestone 1
+Project Setup
+
+✓ Project Structure
+✓ Configuration
+✓ Utilities
+✓ Logging
+
+----------------------------
+
+✅ Milestone 2
+Dataset Pipeline
+
+✓ Dataset Download
+✓ Dataset Preparation
+✓ Dataset Splitting
+✓ Metadata Generation
+✓ Dataloader
+
+----------------------------
+
+🚧 Milestone 3
+
+✓ EfficientNet
+✓ Model Factory
+✓ Optimizer
+✓ Scheduler
+✓ Loss
+✓ Metrics
+✓ Callbacks
+✓ Trainer
+✓ Train Script
+
+Pending
+
+• Integration Testing
+• Evaluator
+How to Run
+# create virtual environment
+uv venv
+
+# install dependencies
+uv sync
+
+# prepare dataset
+uv run python -m scripts.prepare_dataset
+
+# train
+uv run python -m scripts.train
+Dataset
+
+Mention that the dataset is not included in the repository.
+
+Example:
+
+The PlantVillage dataset is downloaded locally using the Kaggle API and is intentionally excluded from version control.
+
+Roadmap
+✔ Milestone 1
+
+✔ Milestone 2
+
+🚧 Milestone 3
+
+⬜ Milestone 4
+FastAPI API
+
+⬜ Milestone 5
+Deployment

@@ -152,3 +152,293 @@ CLASS_NAMES_FILE = METADATA_DIR / "class_names.json"
 DATASET_INFO_FILE = METADATA_DIR / "dataset_info.json"
 
 TRAINING_HISTORY_FILE = METADATA_DIR / "training_history.json"
+
+
+
+# ==========================================================
+# Dataset
+# ==========================================================
+
+IMAGE_SIZE = 224
+
+NUM_CHANNELS = 3
+
+SUPPORTED_IMAGE_EXTENSIONS = {
+    ".jpg",
+    ".jpeg",
+    ".png",
+}
+
+# ==========================================================
+# Data Split
+# ==========================================================
+
+TRAIN_RATIO = 0.70
+
+VAL_RATIO = 0.15
+
+TEST_RATIO = 0.15
+
+RANDOM_SEED = 42
+
+# ==========================================================
+# DataLoader
+# ==========================================================
+
+BATCH_SIZE = 32
+
+NUM_WORKERS = 4
+
+PIN_MEMORY = True
+
+SHUFFLE_TRAIN = True
+
+# ==========================================================
+# Training Modes
+# ==========================================================
+
+TRAIN_MODE = "debug"
+
+TRAIN_MODES = {
+
+    "smoke": {
+        "train_samples": 32,
+        "val_samples": 16,
+        "test_samples": 16,
+        "epochs": 1,
+    },
+
+    "debug": {
+        "train_samples": 500,
+        "val_samples": 100,
+        "test_samples": 100,
+        "epochs": 2,
+    },
+
+    "prototype": {
+        "train_samples": 2000,
+        "val_samples": 400,
+        "test_samples": 400,
+        "epochs": 5,
+    },
+
+    "full": {
+        "train_samples": None,
+        "val_samples": None,
+        "test_samples": None,
+        "epochs": 25,
+    },
+}
+
+# ==========================================================
+# Model
+# ==========================================================
+
+MODEL_NAME = "efficientnet_b0"
+
+PRETRAINED = True
+
+FREEZE_BACKBONE = False
+
+DROPOUT = 0.30
+
+# ==========================================================
+# Optimizer
+# ==========================================================
+
+LEARNING_RATE = 1e-3
+
+WEIGHT_DECAY = 1e-4
+
+OPTIMIZER = "adamw"
+
+# ==========================================================
+# Scheduler
+# ==========================================================
+
+SCHEDULER = "reduce_on_plateau"
+
+LR_PATIENCE = 3
+
+LR_FACTOR = 0.1
+
+MIN_LEARNING_RATE = 1e-6
+
+# ==========================================================
+# Training
+# ==========================================================
+
+LOSS_FUNCTION = "cross_entropy"
+
+EARLY_STOPPING = True
+
+EARLY_STOPPING_PATIENCE = 5
+
+SAVE_BEST_ONLY = True
+
+SAVE_EVERY_EPOCH = False
+
+GRADIENT_CLIP = 1.0
+
+MIXED_PRECISION = True
+
+# ==========================================================
+# Logging
+# ==========================================================
+
+LOG_INTERVAL = 10
+
+VERBOSE = True
+
+# ==========================================================
+# Evaluation
+# ==========================================================
+
+CONFUSION_MATRIX = True
+
+CLASSIFICATION_REPORT = True
+
+SAVE_PREDICTIONS = True
+
+# ==========================================================
+# Checkpoints
+# ==========================================================
+
+CHECKPOINT_DIR = MODELS_DIR / "checkpoints"
+
+BEST_MODEL_NAME = "best_model.pt"
+
+LAST_MODEL_NAME = "last_model.pt"
+
+SAVE_EVERY_N_EPOCHS = 5
+
+RESUME_TRAINING = False
+
+RESUME_CHECKPOINT = None
+
+# ==========================================================
+# Class Imbalance
+# ==========================================================
+
+USE_CLASS_WEIGHTS = False
+
+CLASS_WEIGHTS = None
+
+LABEL_SMOOTHING = 0.0
+
+
+# ==========================================================
+# Early Stopping
+# ==========================================================
+
+EARLY_STOPPING = True
+
+EARLY_STOPPING_PATIENCE = 7
+
+EARLY_STOPPING_MIN_DELTA = 0.0001
+
+MONITOR_METRIC = "val_loss"
+
+# ==========================================================
+# Learning Rate Scheduler
+# ==========================================================
+
+SCHEDULER = "reduce_on_plateau"
+# Options:
+#   reduce_on_plateau
+#   cosine
+#   step
+#   exponential
+#   none
+
+STEP_SIZE = 5
+
+STEP_GAMMA = 0.1
+
+COSINE_T_MAX = NUM_EPOCHS
+
+ETA_MIN = 1e-6
+
+REDUCE_FACTOR = 0.5
+
+REDUCE_PATIENCE = 2
+
+EXPONENTIAL_GAMMA = 0.95
+
+# ==========================================================
+# Optimizer
+# ==========================================================
+
+OPTIMIZER = "adam"
+
+# Supported:
+# adam
+# adamw
+# sgd
+# rmsprop
+
+LEARNING_RATE = 1e-3
+
+WEIGHT_DECAY = 1e-4
+
+MOMENTUM = 0.9
+
+NESTEROV = True
+
+# ==========================================================
+# Training Modes
+# ==========================================================
+
+TRAINING_MODE = "full"
+
+# Options:
+# debug
+# smoke
+# full
+
+MAX_TRAIN_BATCHES = None
+
+MAX_VAL_BATCHES = None
+
+
+# ==========================================================
+# Training Modes
+# ==========================================================
+
+TRAINING_MODE = "full"
+
+# full
+# debug
+# smoke
+
+MAX_TRAIN_BATCHES = None
+
+MAX_VAL_BATCHES = None
+
+# ==========================================================
+# Checkpoint Configuration
+# ==========================================================
+
+SAVE_LAST = True
+
+SAVE_BEST = True
+
+SAVE_EVERY_N_EPOCHS = 5
+
+CHECKPOINT_DIR = MODELS_DIR / "checkpoints"
+
+BEST_MODEL_NAME = "best_model.pt"
+
+LAST_MODEL_NAME = "last_model.pt"
+
+# ==========================================================
+# Training History
+# ==========================================================
+
+HISTORY_DIR = OUTPUTS_DIR / "history"
+
+PLOTS_DIR = OUTPUTS_DIR / "plots"
+
+SAVE_HISTORY = True
+
+SAVE_PLOTS = True

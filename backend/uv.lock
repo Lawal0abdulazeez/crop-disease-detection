@@ -238,6 +238,7 @@ dependencies = [
     { name = "kaggle" },
     { name = "pillow" },
     { name = "python-dotenv" },
+    { name = "scikit-learn" },
     { name = "torchvision" },
     { name = "tqdm" },
 ]
@@ -286,6 +287,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "python-dotenv", marker = "extra == 'api'" },
     { name = "python-multipart", marker = "extra == 'api'" },
+    { name = "scikit-learn", specifier = ">=1.9.0" },
     { name = "scikit-learn", marker = "extra == 'ml'" },
     { name = "seaborn", marker = "extra == 'ml'" },
     { name = "shap", marker = "extra == 'explainability'" },
