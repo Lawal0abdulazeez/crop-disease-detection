@@ -13,18 +13,6 @@ from __future__ import annotations
 import torch
 from torch.utils.data import DataLoader
 
-from app.utils.seed import seed_worker, get_generator
-
-DataLoader(
-    dataset=train_dataset,
-    batch_size=BATCH_SIZE,
-    shuffle=SHUFFLE_TRAIN,
-    num_workers=NUM_WORKERS,
-    pin_memory=PIN_MEMORY,
-    worker_init_fn=seed_worker,
-    generator=get_generator(),
-)
-
 from app.core.config import (
     BATCH_SIZE,
     NUM_WORKERS,
@@ -38,6 +26,9 @@ from app.data.dataset import (
     get_test_dataset,
 )
 
+from app.utils.seed import seed_worker, get_generator
+
+
 # ==========================================================
 # Create Individual DataLoaders
 # ==========================================================
@@ -47,7 +38,6 @@ def get_train_dataloader() -> DataLoader:
     """
     Returns the training DataLoader.
     """
-
     train_dataset = get_train_dataset()
 
     return DataLoader(
@@ -56,6 +46,8 @@ def get_train_dataloader() -> DataLoader:
         shuffle=SHUFFLE_TRAIN,
         num_workers=NUM_WORKERS,
         pin_memory=PIN_MEMORY and torch.cuda.is_available(),
+        worker_init_fn=seed_worker,
+        generator=get_generator(),
         drop_last=False,
     )
 
@@ -64,7 +56,6 @@ def get_validation_dataloader() -> DataLoader:
     """
     Returns the validation DataLoader.
     """
-
     val_dataset = get_validation_dataset()
 
     return DataLoader(
@@ -81,7 +72,6 @@ def get_test_dataloader() -> DataLoader:
     """
     Returns the test DataLoader.
     """
-
     test_dataset = get_test_dataset()
 
     return DataLoader(
@@ -108,11 +98,8 @@ def create_dataloaders() -> tuple[DataLoader, DataLoader, DataLoader]:
     tuple
         (train_loader, validation_loader, test_loader)
     """
-
     train_loader = get_train_dataloader()
-
     validation_loader = get_validation_dataloader()
-
     test_loader = get_test_dataloader()
 
     return (
@@ -131,7 +118,6 @@ def get_dataloader_info() -> dict:
     """
     Returns useful information about the DataLoaders.
     """
-
     train_loader, val_loader, test_loader = create_dataloaders()
 
     return {
@@ -153,7 +139,6 @@ def get_dataloader_info() -> dict:
 # ==========================================================
 
 if __name__ == "__main__":
-
     info = get_dataloader_info()
 
     print("=" * 60)
@@ -178,9 +163,7 @@ if __name__ == "__main__":
 
     print("=" * 60)
 
-    # Verify one batch
     train_loader, _, _ = create_dataloaders()
-
     images, labels = next(iter(train_loader))
 
     print("Sample Batch")
