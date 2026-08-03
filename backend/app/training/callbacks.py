@@ -25,52 +25,62 @@ class EarlyStopping:
         min_delta: float = 0.0,
         mode: str = "min",
     ):
-
         self.patience = patience
         self.min_delta = min_delta
         self.mode = mode
 
         self.best_score = None
-
         self.counter = 0
-
         self.should_stop = False
 
-    def update(
-        self,
-        value: float,
-    ) -> bool:
-
+    def update(self, value: float) -> bool:
         if self.best_score is None:
-
             self.best_score = value
-
             return False
 
         if self.mode == "min":
-
-            improved = value < (
-                self.best_score - self.min_delta
-            )
-
+            improved = value < (self.best_score - self.min_delta)
         else:
-
-            improved = value > (
-                self.best_score + self.min_delta
-            )
+            improved = value > (self.best_score + self.min_delta)
 
         if improved:
-
             self.best_score = value
-
             self.counter = 0
-
         else:
-
             self.counter += 1
-
             if self.counter >= self.patience:
-
                 self.should_stop = True
 
         return self.should_stop
+
+
+# ==========================================================
+# Metric Tracker
+# ==========================================================
+
+class MetricTracker:
+    """
+    Tracks best validation loss and accuracy during training.
+    """
+
+    def __init__(self):
+        self.best_val_loss = float("inf")
+        self.best_val_accuracy = 0.0
+        self.is_best_loss = False
+        self.is_best_accuracy = False
+
+    def update(
+        self,
+        val_loss: float,
+        val_accuracy: float,
+    ) -> None:
+        self.is_best_loss = False
+        self.is_best_accuracy = False
+
+        if val_loss < self.best_val_loss:
+            self.best_val_loss = val_loss
+            self.is_best_loss = True
+
+        if val_accuracy > self.best_val_accuracy:
+            self.best_val_accuracy = val_accuracy
+            self.is_best_accuracy = True
