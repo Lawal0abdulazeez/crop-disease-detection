@@ -20,11 +20,11 @@ from app.core.config import (
     CHECKPOINT_DIR,
     EXPORT_DIR,
     LOG_DIR,
+    OUTPUTS_DIR,
+    HISTORY_DIR,
+    PLOTS_DIR,
 )
 
-# ==========================================================
-# Directories Required By The Project
-# ==========================================================
 
 REQUIRED_DIRECTORIES = [
     DATA_DIR,
@@ -36,21 +36,18 @@ REQUIRED_DIRECTORIES = [
     CHECKPOINT_DIR,
     EXPORT_DIR,
     LOG_DIR,
+    OUTPUTS_DIR,
+    HISTORY_DIR,
+    PLOTS_DIR,
 ]
 
 
 def create_directories(verbose: bool = True) -> None:
     """
     Create all project directories if they do not already exist.
-
-    Args:
-        verbose (bool):
-            Whether to print created directories.
     """
-
     for directory in REQUIRED_DIRECTORIES:
         directory.mkdir(parents=True, exist_ok=True)
-
         if verbose:
             print(f"✓ {directory}")
 
@@ -58,14 +55,7 @@ def create_directories(verbose: bool = True) -> None:
 def ensure_directory(path: Path) -> Path:
     """
     Ensure a single directory exists.
-
-    Args:
-        path (Path): Directory path.
-
-    Returns:
-        Path: The created (or existing) directory.
     """
-
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -74,12 +64,7 @@ def initialize_project(verbose: bool = True) -> None:
     """
     Initialize the project's directory structure.
     Safe to call multiple times.
-
-    Args:
-        verbose (bool):
-            Whether to display created directories.
     """
-
     if verbose:
         print("=" * 60)
         print("Initializing Project Directory Structure")
@@ -92,10 +77,6 @@ def initialize_project(verbose: bool = True) -> None:
         print("Project directories are ready.")
         print("=" * 60)
 
-
-# ==========================================================
-# Run Directly
-# ==========================================================
 
 if __name__ == "__main__":
     initialize_project()
