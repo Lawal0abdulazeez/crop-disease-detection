@@ -45,6 +45,7 @@ EXPORT_DIR = MODEL_DIR / "exports"
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 HISTORY_DIR = OUTPUTS_DIR / "history"
 PLOTS_DIR = OUTPUTS_DIR / "plots"
+EVAL_DIR = OUTPUTS_DIR / "evaluation"
 
 LOG_DIR = PROJECT_ROOT / "logs"
 
@@ -144,15 +145,11 @@ GRADIENT_CLIP = 1.0
 MIXED_PRECISION = True
 
 # Training mode: "full" | "debug" | "smoke"
-# - full  : use entire dataset, NUM_EPOCHS epochs
-# - debug : limit batches, fewer epochs (quick sanity check)
-# - smoke : 1 epoch, very few batches (pipeline check)
 TRAINING_MODE = "full"
 
-MAX_TRAIN_BATCHES = None  # set automatically from TRAINING_MODE if needed
+MAX_TRAIN_BATCHES = None
 MAX_VAL_BATCHES = None
 
-# Convenience presets (applied in Trainer if TRAINING_MODE != "full")
 TRAIN_MODE_PRESETS = {
     "smoke": {
         "max_train_batches": 2,
@@ -215,6 +212,7 @@ VERBOSE = True
 CONFUSION_MATRIX = True
 CLASSIFICATION_REPORT = True
 SAVE_PREDICTIONS = True
+TOP_K_EVAL = 3
 
 # ============================================================
 # Metadata Files
