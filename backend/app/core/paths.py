@@ -23,6 +23,7 @@ from app.core.config import (
     OUTPUTS_DIR,
     HISTORY_DIR,
     PLOTS_DIR,
+    EVAL_DIR,
 )
 
 
@@ -39,6 +40,7 @@ REQUIRED_DIRECTORIES = [
     OUTPUTS_DIR,
     HISTORY_DIR,
     PLOTS_DIR,
+    EVAL_DIR,
 ]
 
 
