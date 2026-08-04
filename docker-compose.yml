@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      # Optional: public URL to best_model.pt
+      # - MODEL_URL=https://...
+      # - CLASS_NAMES_URL=https://...
+    volumes:
+      # Mount your local smoke/full checkpoint for testing without rebuild
+      - ./backend/models/checkpoints:/app/models/checkpoints
+      - ./backend/data/metadata:/app/data/metadata
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Browser calls backend on host during local compose
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
