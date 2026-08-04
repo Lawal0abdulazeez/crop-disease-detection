@@ -1,0 +1,40 @@
+# Render Blueprint
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Before deploy:
+# 1. Host best_model.pt somewhere public (Hugging Face, S3, etc.)
+# 2. Set MODEL_URL (and optional CLASS_NAMES_URL) in the dashboard or below
+# 3. After backend is live, set VITE_API_URL on the frontend service to the API URL
+#    and trigger a redeploy of the static site.
+
+services:
+  - type: web
+    name: crop-disease-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8000"
+      - key: MODEL_URL
+        sync: false
+      - key: MODEL_FILENAME
+        value: best_model.pt
+      - key: CLASS_NAMES_URL
+        sync: false
+
+  - type: web
+    name: crop-disease-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
