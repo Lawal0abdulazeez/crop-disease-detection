@@ -11,12 +11,10 @@ Project: Crop Disease Detection
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import torch
 from torch import nn
-from torch.cuda.amp import GradScaler
 from tqdm import tqdm
 
 from app.training.metrics import (
@@ -35,7 +33,6 @@ from app.training.scheduler import scheduler_requires_metric
 from app.utils.device import get_device
 from app.utils.logger import get_logger
 from app.core.config import (
-    NUM_EPOCHS,
     EARLY_STOPPING,
     EARLY_STOPPING_PATIENCE,
     EARLY_STOPPING_MIN_DELTA,
@@ -77,8 +74,10 @@ class Trainer:
         self.scheduler = scheduler
         self.criterion = criterion
 
-        self.scaler = GradScaler(
-            enabled=self.device.type == "cuda"
+        # New API (avoids FutureWarning)
+        self.scaler = torch.amp.GradScaler(
+            "cuda",
+            enabled=self.device.type == "cuda",
         )
 
         self.metric_tracker = MetricTracker()
@@ -89,7 +88,6 @@ class Trainer:
             mode="min",
         )
 
-        # Apply training-mode limits
         preset = TRAIN_MODE_PRESETS.get(
             TRAINING_MODE.lower(),
             TRAIN_MODE_PRESETS["full"],
@@ -117,10 +115,6 @@ class Trainer:
         logger.info(f"Training batches: {len(train_loader)}")
         logger.info(f"Validation batches: {len(val_loader)}")
         logger.info(f"Device          : {self.device}")
-
-    # ==========================================================
-    # Train One Epoch
-    # ==========================================================
 
     def train_one_epoch(self, epoch: int) -> dict:
         self.model.train()
@@ -188,10 +182,6 @@ class Trainer:
 
         return epoch_metrics
 
-    # ==========================================================
-    # Validate One Epoch
-    # ==========================================================
-
     def validate_one_epoch(self, epoch: int) -> dict:
         self.model.eval()
 
@@ -242,10 +232,6 @@ class Trainer:
 
         return epoch_metrics
 
-    # ==========================================================
-    # Training Loop
-    # ==========================================================
-
     def train(
         self,
         num_epochs: int | None = None,
@@ -253,14 +239,6 @@ class Trainer:
         num_classes: int = 15,
         resume: bool = False,
     ) -> dict:
-        """
-        Execute the full training loop.
-
-        Returns
-        -------
-        dict
-            Training history.
-        """
         if num_epochs is None:
             num_epochs = self.default_epochs
 
@@ -278,14 +256,12 @@ class Trainer:
             train_metrics = self.train_one_epoch(epoch)
             val_metrics = self.validate_one_epoch(epoch)
 
-            # Scheduler step
             if self.scheduler is not None:
                 if scheduler_requires_metric(self.scheduler):
                     self.scheduler.step(val_metrics["loss"])
                 else:
                     self.scheduler.step()
 
-            # History
             self.history["train_loss"].append(train_metrics["loss"])
             self.history["val_loss"].append(val_metrics["loss"])
             self.history["train_accuracy"].append(train_metrics["accuracy"])
@@ -300,14 +276,12 @@ class Trainer:
             current_lr = self.optimizer.param_groups[0]["lr"]
             self.history["learning_rate"].append(current_lr)
 
-            # Best metric tracking
             self.metric_tracker.update(
                 val_loss=val_metrics["loss"],
                 val_accuracy=val_metrics["accuracy"],
             )
             is_best = self.metric_tracker.is_best_accuracy
 
-            # Checkpoint
             save_checkpoint(
                 epoch=epoch,
                 model=self.model,
@@ -322,7 +296,6 @@ class Trainer:
                 is_best=is_best,
             )
 
-            # Epoch summary
             logger.info("-" * 70)
             logger.info(f"Train Loss : {train_metrics['loss']:.4f}")
             logger.info(f"Val Loss   : {val_metrics['loss']:.4f}")
@@ -331,7 +304,6 @@ class Trainer:
             logger.info(f"Learning Rate : {current_lr:.6f}")
             logger.info("-" * 70)
 
-            # Early stopping
             if EARLY_STOPPING:
                 stop = self.early_stopping.update(val_metrics["loss"])
                 if stop:
@@ -347,19 +319,7 @@ class Trainer:
 
         return self.history
 
-    # ==========================================================
-    # Resume Training
-    # ==========================================================
-
     def resume_checkpoint(self) -> int:
-        """
-        Resume training from the latest checkpoint.
-
-        Returns
-        -------
-        int
-            Epoch to continue from.
-        """
         checkpoint_path = CHECKPOINT_DIR / LAST_MODEL_NAME
 
         if not checkpoint_path.exists():
@@ -383,10 +343,6 @@ class Trainer:
 
         return start_epoch
 
-    # ==========================================================
-    # Save History
-    # ==========================================================
-
     def save_history(self) -> None:
         if not SAVE_HISTORY:
             return
@@ -399,10 +355,6 @@ class Trainer:
 
         logger.info(f"Training history saved to {output_file}")
 
-    # ==========================================================
-    # Plot History
-    # ==========================================================
-
     def plot_history(self) -> None:
         if not SAVE_PLOTS:
             return
@@ -413,7 +365,6 @@ class Trainer:
         PLOTS_DIR.mkdir(parents=True, exist_ok=True)
         epochs = range(1, len(self.history["train_loss"]) + 1)
 
-        # Loss
         plt.figure(figsize=(8, 5))
         plt.plot(epochs, self.history["train_loss"], label="Train")
         plt.plot(epochs, self.history["val_loss"], label="Validation")
@@ -426,7 +377,6 @@ class Trainer:
         plt.savefig(PLOTS_DIR / "loss_curve.png")
         plt.close()
 
-        # Accuracy
         plt.figure(figsize=(8, 5))
         plt.plot(epochs, self.history["train_accuracy"], label="Train")
         plt.plot(epochs, self.history["val_accuracy"], label="Validation")
@@ -439,7 +389,6 @@ class Trainer:
         plt.savefig(PLOTS_DIR / "accuracy_curve.png")
         plt.close()
 
-        # Learning rate
         plt.figure(figsize=(8, 5))
         plt.plot(epochs, self.history["learning_rate"])
         plt.xlabel("Epoch")
