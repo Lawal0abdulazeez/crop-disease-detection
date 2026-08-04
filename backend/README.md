@@ -47,30 +47,22 @@ History/plots → `outputs/history/`, `outputs/plots/`
 
 ## Evaluation (Milestone 4)
 
-Uses your existing smoke (or full) checkpoint:
-
 ```bash
 uv run python -m scripts.evaluate
 uv run python -m scripts.evaluate --checkpoint last
 ```
 
-Outputs → `outputs/evaluation/`:
-- `metrics.json`
-- `classification_report.txt`
-- `confusion_matrix.png`
-- `predictions.json`
+Outputs → `outputs/evaluation/`
 
 ## CLI Predict
 
 ```bash
 uv run python -m scripts.predict path/to/leaf.jpg
-uv run python -m scripts.predict path/to/leaf.jpg --checkpoint best --top-k 5
 ```
 
 ## FastAPI (Milestone 5)
 
 ```bash
-uv sync --extra api --extra ml
 uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -84,11 +76,9 @@ Open: http://localhost:8000/docs
 | POST | `/predict` | Single image upload |
 | POST | `/batch-predict` | Multiple images |
 
-Example:
+## Frontend & deployment (Milestone 6)
 
-```bash
-curl -X POST "http://localhost:8000/predict" -F "file=@leaf.jpg"
-```
+React app lives in `/frontend`. Full local test and Render steps: see **[DEPLOY.md](../DEPLOY.md)** at the repo root.
 
 ## Milestone Status
 
@@ -99,4 +89,4 @@ curl -X POST "http://localhost:8000/predict" -F "file=@leaf.jpg"
 | 3. Training | ✅ (smoke verified; full when ready) |
 | 4. Evaluation | ✅ |
 | 5. FastAPI | ✅ |
-| 6. Frontend + Deploy | ⬜ Next |
+| 6. Frontend + Deploy | ✅ (test locally, then Render) |
