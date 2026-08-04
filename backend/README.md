@@ -2,94 +2,101 @@
 
 ## Setup
 
-This project uses `uv` for Python dependency management.
-
 ```bash
 cd backend
 uv venv
-uv sync --extra ml
-```
-
-For API and explainability later:
-
-```bash
-uv sync --extra api --extra ml --extra explainability
+uv sync --extra ml --extra api
 ```
 
 ## Dataset
 
-The PlantVillage dataset is **not** included in the repository. Download it locally with the Kaggle API.
+PlantVillage is **not** in the repo. Use Kaggle:
 
-1. Create a `.env` file in `backend/` with:
+1. `backend/.env`:
 
 ```env
 KAGGLE_USERNAME=your_username
 KAGGLE_KEY=your_key
 ```
 
-2. Download:
+(Use plain `KEY=value` lines only — no quotes or extra text, or python-dotenv will warn.)
+
+2. Download + prepare:
 
 ```bash
 uv run python scripts/download_dataset.py
-```
-
-3. Prepare splits (train / val / test):
-
-```bash
 uv run python -m scripts.prepare_dataset
 ```
 
-Data will live under `backend/data/` (gitignored).
-
 ## Training
 
-### 1. Choose training mode (in `app/core/config.py`)
+In `app/core/config.py`:
 
 ```python
-TRAINING_MODE = "full"   # options: "smoke" | "debug" | "full"
+TRAINING_MODE = "smoke"   # or "debug" | "full"
 ```
 
-| Mode   | Purpose                         | Epochs | Batches limited? |
-|--------|---------------------------------|--------|------------------|
-| smoke  | Pipeline check                  | 1      | Yes (very few)   |
-| debug  | Quick sanity check              | 2      | Yes              |
-| full   | Real training on full dataset   | 20     | No               |
-
-### 2. Run training
-
 ```bash
-# From the backend/ directory
 uv run python -m scripts.train
 ```
 
-Checkpoints are saved to `backend/models/checkpoints/`:
-- `best_model.pt`
-- `last_model.pt`
-- periodic `epoch_XXX.pt`
+Checkpoints → `models/checkpoints/best_model.pt` and `last_model.pt`  
+History/plots → `outputs/history/`, `outputs/plots/`
 
-History and plots go to:
-- `backend/outputs/history/training_history.json`
-- `backend/outputs/plots/` (loss, accuracy, LR curves)
+**Plug-and-play:** After full training later, the same `best_model.pt` is used by evaluate, predict, and the API with no code changes.
 
-Logs: `backend/logs/training.log`
+## Evaluation (Milestone 4)
 
-### Resume training
+Uses your existing smoke (or full) checkpoint:
 
-In `scripts/train.py` set `resume=True` when calling `trainer.train(...)`, or modify the call after a quick edit.
+```bash
+uv run python -m scripts.evaluate
+uv run python -m scripts.evaluate --checkpoint last
+```
+
+Outputs → `outputs/evaluation/`:
+- `metrics.json`
+- `classification_report.txt`
+- `confusion_matrix.png`
+- `predictions.json`
+
+## CLI Predict
+
+```bash
+uv run python -m scripts.predict path/to/leaf.jpg
+uv run python -m scripts.predict path/to/leaf.jpg --checkpoint best --top-k 5
+```
+
+## FastAPI (Milestone 5)
+
+```bash
+uv sync --extra api --extra ml
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Open: http://localhost:8000/docs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health + model loaded |
+| GET | `/classes` | Class names |
+| GET | `/model-info` | Model metadata |
+| POST | `/predict` | Single image upload |
+| POST | `/batch-predict` | Multiple images |
+
+Example:
+
+```bash
+curl -X POST "http://localhost:8000/predict" -F "file=@leaf.jpg"
+```
 
 ## Milestone Status
 
 | Milestone | Status |
 |-----------|--------|
-| 1. Project Foundation | ✅ Completed |
-| 2. Data Pipeline | ✅ Completed |
-| 3. Model Development & Training | ✅ Training pipeline ready (run on your machine) |
-| 4. Evaluation & Explainability | ⬜ Pending |
-| 5. FastAPI | ⬜ Pending |
-| 6. Frontend + Deployment | ⬜ Pending |
-
-## Notes
-
-- Requires Python ≥ 3.11
-- GPU (CUDA) is used automatically when available; otherwise CPU
-- `NUM_CLASSES` is detected from the dataset at runtime (no hard-coding)
+| 1. Foundation | ✅ |
+| 2. Data pipeline | ✅ |
+| 3. Training | ✅ (smoke verified; full when ready) |
+| 4. Evaluation | ✅ |
+| 5. FastAPI | ✅ |
+| 6. Frontend + Deploy | ⬜ Next |
