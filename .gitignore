@@ -23,44 +23,25 @@ Thumbs.db
 logs/
 *.log
 
-
-# Optional: if you only want to ignore raw data
-data/raw/
-
-# Notebook checkpoints
-.ipynb_checkpoints/
-
-backend/data/
-
-
-# Dataset
+# Data
 data/raw/
 data/splits/
-
-# Metadata (optional)
 data/metadata/
+backend/data/
 
 # Outputs
 outputs/
-
-# Logs
-logs/
+backend/outputs/
 
 # Models
 models/checkpoints/
+backend/models/
 
-# Python
-__pycache__/
-*.pyc
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.local
 
 # Environment
-.env
 .venv/
-
-# IDE
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
